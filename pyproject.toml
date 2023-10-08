@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "beancount-icabank"
+name = "beancount-icabanken"
 version = "0.1.0"
 description = ""
 authors = ["Per Lejon <per@lejon.org>"]
