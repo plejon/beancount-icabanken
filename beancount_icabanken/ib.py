@@ -66,16 +66,20 @@ class Ib(ImporterProtocol):
             ]
 
             if entry.Text in self.known_transactions:
-                postings.append(
-                    data.Posting(
-                        self.known_transactions[entry.Text],
-                        Amount(D(str(entry.Belopp * -1)), "SEK"),
-                        None,
-                        None,
-                        None,
-                        None,
-                    )
+                typename = self.known_transactions[entry.Text]
+            else:
+                typename = "Expenses:Unknown"
+
+            postings.append(
+                data.Posting(
+                    typename,
+                    Amount(D(str(entry.Belopp * -1)), "SEK"),
+                    None,
+                    None,
+                    None,
+                    None,
                 )
+            )
 
             entries.append(
                 data.Transaction(
