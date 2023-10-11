@@ -125,5 +125,7 @@ class Ib(ImporterProtocol):
         return csv_obj.end_date
 
     def file_name(self, file):
+        csv_obj = self.load_file(file)
+        account = csv_obj.account_number.replace(" ", "")
         _, extension = os.path.splitext(os.path.basename(file.name))
-        return f"IcaBanken{extension}"
+        return f"{account}{extension}"
