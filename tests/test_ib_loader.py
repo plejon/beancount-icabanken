@@ -1,6 +1,7 @@
 from decimal import Decimal
 from textwrap import dedent
 from datetime import datetime, date
+from beancount_icabanken.utils import make_date_obj
 from csv import DictReader
 import pytest
 
@@ -37,13 +38,15 @@ def test_ibcsv_pass(tmp_file_pass):
 
     case = IBCSV(
         account_number=account_number,
-        start_date=start_date,
-        end_date=end_date,
+        beancount_account= "Assets:CreditCard",
+        start_date=make_date_obj(start_date),
+        end_date=make_date_obj(end_date),
         transactions=transactions,
         file_name=tmp_file_pass.name,
     )
 
     assert case.account_number == "9274-123 456 7"
+    assert case.beancount_account == "Assets:CreditCard"
     assert case.start_date == date(2023, 9, 1)
     assert case.end_date == date(2023, 9, 30)
 

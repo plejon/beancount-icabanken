@@ -28,6 +28,11 @@ class Ib(ImporterProtocol):
 
         account_number = lines.pop(0)
 
+        if account_number in self.account_info:
+            beancount_account = self.account_info[account_number]
+        else:
+            raise ValueError(f"Unknown account number: {account_number}")
+
         start_date = lines.pop(0)
         start_date_obj = make_date_obj(start_date)
 
@@ -37,6 +42,7 @@ class Ib(ImporterProtocol):
         transactions = list(DictReader(lines, delimiter=";"))
         csv_obj = IBCSV(
             account_number=account_number,
+            beancount_account=beancount_account,
             start_date=start_date_obj,
             end_date=end_date_obj,
             transactions=transactions,
@@ -60,7 +66,7 @@ class Ib(ImporterProtocol):
         for index, entry in transactions:
             postings = [
                 data.Posting(
-                    csv_obj.account_number,
+                    csv_obj.beancount_account,
                     Amount(D(str(entry.Belopp)), "SEK"),
                     None,
                     None,
@@ -87,7 +93,7 @@ class Ib(ImporterProtocol):
 
             entries.append(
                 data.Transaction(
-                    meta=data.new_metadata(csv_obj.account_number, index),
+                    meta=data.new_metadata(csv_obj.beancount_account, index),
                     date=entry.Datum,
                     flag=flags.FLAG_OKAY,
                     payee=entry.Text,
@@ -102,7 +108,7 @@ class Ib(ImporterProtocol):
         data.Balance(
             meta,
             csv_obj.end_date,
-            csv_obj.account_number,
+            csv_obj.beancount_account,
             transactions[-1][1].Saldo,
             None,
             None,
@@ -112,7 +118,7 @@ class Ib(ImporterProtocol):
 
     def file_account(self, file):
         csv_obj = self.load_file(file)
-        return csv_obj.account_number
+        return csv_obj.beancount_account
 
     def file_date(self, file):
         csv_obj = self.load_file(file)

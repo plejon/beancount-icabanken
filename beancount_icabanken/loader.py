@@ -40,10 +40,12 @@ class IBTransaction(BaseModel):
 
 
 class IBCSV(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True, extra="forbid", validate_default=True, strict=True)
     file_name: str
     start_date: date
     end_date: date
     account_number: str
+    beancount_account: str
     transactions: list[IBTransaction]
 
     @field_validator("account_number", mode="after")  # noqa
