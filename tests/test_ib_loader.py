@@ -13,7 +13,9 @@ def tmp_file_pass(tmp_path):
     x.write_text(
         dedent(
             """
-            9274-123 456 7
+            9274-123 456 7  
+            2023-09-01
+            2023-09-30
             Datum;Text;Typ;Budgetgrupp;Belopp;Saldo
             2023-10-01;Crv Maxi Ica Stormarkn ; Korttransaktion;Övrigt;-192,75 kr;-19 961,17 kr
             2023-10-01    ;Crv Maxi Ica Stormarkn;Korttransaktion;Övrigt;-10,00 kr;-19 768,42 kr
@@ -29,11 +31,21 @@ def test_ibcsv_pass(tmp_file_pass):
         lines = [l.strip() for l in f.readlines()]
 
     account_number = lines.pop(0)
+    start_date = lines.pop(0)
+    end_date = lines.pop(0)
     transactions = list(DictReader(lines, delimiter=";"))
 
-    case = IBCSV(account_number=account_number, transactions=transactions, file_name=tmp_file_pass.name)
+    case = IBCSV(
+        account_number=account_number,
+        start_date=start_date,
+        end_date=end_date,
+        transactions=transactions,
+        file_name=tmp_file_pass.name,
+    )
 
     assert case.account_number == "9274-123 456 7"
+    assert case.start_date == date(2023, 9, 1)
+    assert case.end_date == date(2023, 9, 30)
 
     assert case.transactions[0].Datum == date(2023, 10, 1)
     assert case.transactions[0].Text == "Crv Maxi Ica Stormarkn"

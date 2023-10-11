@@ -41,6 +41,8 @@ class IBTransaction(BaseModel):
 
 class IBCSV(BaseModel):
     file_name: str
+    start_date: date
+    end_date: date
     account_number: str
     transactions: list[IBTransaction]
 

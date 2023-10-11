@@ -10,4 +10,3 @@ def csv_file():
 def test_import(csv_file):
     ib = Ib({"9274-261 885 6": "Assets:IcaBanken:DebitCard"}, {})
     i = ib.identify(csv_file)
-    print()
